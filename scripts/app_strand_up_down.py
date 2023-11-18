@@ -3,6 +3,11 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
+from pathlib import Path
+
+BASE_DIR = Path(__file__)
+VIDEOS_DIR = BASE_DIR / 'test_videos'
+VIDEO_FILE = VIDEOS_DIR / 'left_right.mp4'
 
 # Initialize MediaPipe Pose model
 mp_pose = mp.solutions.pose
@@ -66,8 +71,7 @@ def run_pose_detection(cap):
 # Buttons for demo and real-time
 if st.button('Start Demo'):
     # Path to the demo video file
-    demo_video_path = './test_videos/left_right.mp4'
-    video_cap = cv2.VideoCapture(demo_video_path)
+    video_cap = cv2.VideoCapture(VIDEO_FILE)
     run_pose_detection(video_cap)
 
 if st.button('Start Real-Time'):
