@@ -55,6 +55,11 @@ def run_pose_detection(cap):
 
     frame_placeholder = st.empty()
     status_placeholder = st.empty()
+    
+    frame_count = 0
+    
+    speed = None
+    previous_landmarks = None
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -65,10 +70,19 @@ def run_pose_detection(cap):
         frame, pose = estimator.process_frame(frame)
 
         person_is_standing = not position.lying_down(pose.pose_landmarks)
+        
+        frame_count += 1
+        # each second
+        if frame_count % 30 == 0:
+            if previous_landmarks:
+                speed = pose.pose_landmarks.landmark[MP_POSE.PoseLandmark.LEFT_SHOULDER.value].y - previous_landmarks.landmark[MP_POSE.PoseLandmark.LEFT_SHOULDER.value].y
+                print(f"Speed : {speed}")
+            previous_landmarks = pose.pose_landmarks
+        
 
         if person_is_standing:
             person_was_standing = person_is_standing
-        elif person_was_standing and not person_is_standing:
+        elif person_was_standing and not person_is_standing and speed > 0.2:
             status_placeholder.markdown("**Alert: A fall has been detected!**")
             person_was_standing = not person_is_standing
 
