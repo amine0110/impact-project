@@ -4,6 +4,8 @@ import time
 from pathlib import Path
 import streamlit as st
 import simpleaudio as sa
+from heyoo import WhatsApp
+from codecarbon import EmissionsTracker
 
 # MediaPipe components
 MP_POSE = mp.solutions.pose
@@ -43,9 +45,20 @@ def play_alert_sound():
     wave_obj = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
     wave_obj.play()
 
+def send_whatsapp_message(message):
+    messenger = WhatsApp(
+        'EAAjvtZBG3U5kBO5slQkMCsmmtDYMzUibdGQC3av83ExfCNBDMz4BcBdduA9OUP0rHCaZBilV4nAf5hFc9ADXBx6AiY5Bgc5GeLUuOQNdlBcP8oeEvdAzo0GLz8b6N15EXZCeyIOjgiBvYyJHxXQZA9A7GFWM5gM4EM7CUml3YpkoohMeTldWQfrlnMR3ZByuYpwg1Ie6nOLW0j4QE',
+        phone_number_id='187892834398988'
+    )
+
+    # For sending a Text messages
+    messenger.send_message(message, '+32456147168')
+
 def run_pose_detection(video_source):
     frame_placeholder, status_placeholder = st.empty(), st.empty()
     speed = None
+    send_message_flag = 0
+    
     estimator = PoseEstimator()
     position_detector = PositionDetector()
 
@@ -75,7 +88,14 @@ def run_pose_detection(video_source):
         elif person_was_standing and not person_is_standing:
             status_placeholder.error("⚠️ Alert: A fall has been detected!")
             play_alert_sound()
+            #send_whatsapp_message(message="⚠️ Alert: A fall has been detected!")
             person_was_standing = not person_is_standing
+            if send_message_flag == 0:
+                send_message_flag = 1
+        
+            if send_message_flag == 1:
+                send_whatsapp_message(message="⚠️ Alert: A fall has been detected!")
+                send_message_flag = -1
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_placeholder.image(frame, channels='RGB')

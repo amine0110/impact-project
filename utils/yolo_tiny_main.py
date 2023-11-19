@@ -6,6 +6,8 @@ import argparse
 import numpy as np
 import streamlit as st
 import simpleaudio as sa
+from heyoo import WhatsApp
+from codecarbon import track_emissions
 
 # Workaround to avoid modifying "human_falling_detect_tracks" code
 import sys
@@ -27,6 +29,15 @@ def play_alert_sound():
     wave_obj = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
     wave_obj.play()
 
+def send_whatsapp_message(message):
+    messenger = WhatsApp(
+        'EAAjvtZBG3U5kBO5slQkMCsmmtDYMzUibdGQC3av83ExfCNBDMz4BcBdduA9OUP0rHCaZBilV4nAf5hFc9ADXBx6AiY5Bgc5GeLUuOQNdlBcP8oeEvdAzo0GLz8b6N15EXZCeyIOjgiBvYyJHxXQZA9A7GFWM5gM4EM7CUml3YpkoohMeTldWQfrlnMR3ZByuYpwg1Ie6nOLW0j4QE',
+        phone_number_id='187892834398988'
+    )
+
+    # For sending a Text messages
+    messenger.send_message(message, '+32456147168')
+
 def preproc(image):
     """preprocess function for CameraLoader.
     """
@@ -47,6 +58,7 @@ def kpt2bbox(kpt, ex=20):
 def yolo_detect(source : str = '0'):
     # Streamlit utils
     frame_placeholder, status_placeholder = st.empty(), st.empty()
+    send_message_flag = 0
 
     # DETECTION MODEL.
     inp_dets = 384
@@ -151,7 +163,15 @@ def yolo_detect(source : str = '0'):
                 
                 if action.split(':')[0] == 'Fall Down':
                     status_placeholder.error('⚠️ Alert: A fall has been detected!')
-                    play_alert_sound()
+                    play_alert_sound() # Play a sound to notify the humain assistant
+
+                    if send_message_flag == 0:
+                        send_message_flag = 1
+
+                    # Send a message if the flag is activated (only one time)
+                    if send_message_flag == 1:
+                        send_whatsapp_message(message="⚠️ Alert: A fall has been detected!")
+                        send_message_flag = -1
                     
                 frame = cv2.putText(frame, action, (bbox[0] + 5, bbox[1] + 15), cv2.FONT_HERSHEY_COMPLEX,
                                     0.4, clr, 1)
