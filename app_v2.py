@@ -60,7 +60,7 @@ class CHUAssistant:
                 self.access_webcam_mediapipe()
 
     def initialize_ui(self):
-        st.title("AI Assistant for your patients")
+        st.title("👨‍⚕️ Fall Fighter")
 
         st.sidebar.title("Navigation")
         app_mode = st.sidebar.radio("Choose the App Mode", 
