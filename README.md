@@ -19,3 +19,7 @@ python3 config_env.py
 ```
 streamlit run app_v2.py
 ```
+
+## CO2 Emission
+- YOLO: 535g 
+- Ours: 302g
