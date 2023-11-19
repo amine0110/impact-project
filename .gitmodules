@@ -1,3 +1,3 @@
-[submodule "Human-Falling-Detect-Tracks"]
+[submodule "human_falling_detect_tracks"]
 	path = human_falling_detect_tracks
 	url = https://github.com/GajuuzZ/Human-Falling-Detect-Tracks
