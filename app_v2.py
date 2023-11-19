@@ -9,7 +9,14 @@ class CHUAssistant:
         self.video_path = './test_videos/left_right.mp4'
         self.webcam_str = '0'
         self.webcam_int = 0
+        self.lottie_animation = self.load_lottieurl("https://lottie.host/2846e1e3-bd70-424d-9a7d-47eacb42b3d4/iyJTZj8HpU.json")
         self.initialize_ui()
+    
+    def load_lottieurl(self, url: str):
+        r = requests.get(url)
+        if r.status_code != 200:
+            return None
+        return r.json()
 
     def process_video_tiny(self):
         yolo_detect(self.video_path)
@@ -51,7 +58,7 @@ class CHUAssistant:
                                     ["Home", "YOLO-Tiny Integration", "CHU-Assist"])
 
         if app_mode == "Home":
-            st.write("Welcome to the platform")
+            st_lottie(self.lottie_animation, key="animation",height=500, width=500)
         elif app_mode == "YOLO-Tiny Integration":
             self.yolo_tiny_integration()
         elif app_mode == "CHU-Assist":
