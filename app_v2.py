@@ -1,15 +1,18 @@
 import streamlit as st
+from yolo_tiny_main import yolo_detect
 
 class CHUAssistant:
     def __init__(self):
         self.video_path = './test_videos/left_right.mp4'
+        self.webcam_str = '0'
+        self.webcam_int = 0
         self.initialize_ui()
 
     def process_video(self, video_path):
-        st.video(video_path)
+        yolo_detect(video_path)
 
     def access_webcam(self):
-        st.write("Webcam access not implemented yet.")
+        yolo_detect(self.webcam_str)
 
     def yolo_tiny_integration(self):
         st.subheader("YOLO-Tiny Integration")
