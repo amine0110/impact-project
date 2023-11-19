@@ -1,6 +1,6 @@
 import streamlit as st
-from yolo_tiny_main import yolo_detect
-from mediapipe_main import run_pose_detection
+from utils.yolo_tiny_main import yolo_detect
+from utils.mediapipe_main import run_pose_detection
 from streamlit_lottie import st_lottie
 import requests
 
