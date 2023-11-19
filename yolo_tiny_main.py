@@ -5,6 +5,7 @@ import torch
 import argparse
 import numpy as np
 import streamlit as st
+import simpleaudio as sa
 
 # Workaround to avoid modifying "human_falling_detect_tracks" code
 import sys
@@ -21,9 +22,10 @@ from human_falling_detect_tracks.Track.Tracker import Detection, Tracker
 from human_falling_detect_tracks.ActionsEstLoader import TSSTG
 
 
-# source = 'test_videos/bed_ground.mp4'
-# source = '0'
-
+def play_alert_sound():
+    ALERT_SOUND_PATH = "./assets/alert.wav"
+    wave_obj = sa.WaveObject.from_wave_file(ALERT_SOUND_PATH)
+    wave_obj.play()
 
 def preproc(image):
     """preprocess function for CameraLoader.
@@ -32,7 +34,6 @@ def preproc(image):
     image = resize_fn(image)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
-
 
 def kpt2bbox(kpt, ex=20):
     """Get bbox that hold on all of the keypoints (x,y)
@@ -45,7 +46,7 @@ def kpt2bbox(kpt, ex=20):
 
 def yolo_detect(source : str = '0'):
     # Streamlit utils
-    frame_placeholder = st.empty()
+    frame_placeholder, status_placeholder = st.empty(), st.empty()
 
     # DETECTION MODEL.
     inp_dets = 384
@@ -147,6 +148,11 @@ def yolo_detect(source : str = '0'):
                 frame = cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 1)
                 frame = cv2.putText(frame, str(track_id), (center[0], center[1]), cv2.FONT_HERSHEY_COMPLEX,
                                     0.4, (255, 0, 0), 2)
+                
+                if action.split(':')[0] == 'Fall Down':
+                    status_placeholder.error('⚠️ Alert: A fall has been detected!')
+                    play_alert_sound()
+                    
                 frame = cv2.putText(frame, action, (bbox[0] + 5, bbox[1] + 15), cv2.FONT_HERSHEY_COMPLEX,
                                     0.4, clr, 1)
 

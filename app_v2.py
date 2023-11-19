@@ -1,5 +1,8 @@
 import streamlit as st
 from yolo_tiny_main import yolo_detect
+from mediapipe_main import run_pose_detection
+from streamlit_lottie import st_lottie
+import requests
 
 class CHUAssistant:
     def __init__(self):
@@ -8,31 +11,37 @@ class CHUAssistant:
         self.webcam_int = 0
         self.initialize_ui()
 
-    def process_video(self, video_path):
-        yolo_detect(video_path)
+    def process_video_tiny(self):
+        yolo_detect(self.video_path)
+    
+    def process_video_mediapipe(self):
+        run_pose_detection(self.video_path)
 
-    def access_webcam(self):
+    def access_webcam_tiny(self):
         yolo_detect(self.webcam_str)
+    
+    def access_webcam_mediapipe(self):
+        run_pose_detection(self.webcam_int)
 
     def yolo_tiny_integration(self):
         st.subheader("YOLO-Tiny Integration")
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Launch YOLO-Tiny Demo Video"):
-                self.process_video(self.video_path)
+                self.process_video_tiny()
         with col2:
             if st.button("Launch YOLO-Tiny Webcam"):
-                self.access_webcam()
+                self.access_webcam_tiny()
 
     def chu_assist(self):
         st.subheader("CHU-Assist")
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Launch CHU-Assist Demo Video"):
-                self.process_video(self.video_path)
+                self.process_video_mediapipe()
         with col2:
             if st.button("Launch CHU-Assist Webcam"):
-                self.access_webcam()
+                self.access_webcam_mediapipe()
 
     def initialize_ui(self):
         st.title("AI Assistant for your patients")
