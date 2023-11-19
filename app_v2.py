@@ -3,6 +3,7 @@ from utils.yolo_tiny_main import yolo_detect
 from utils.mediapipe_main import run_pose_detection
 from streamlit_lottie import st_lottie
 import requests
+from codecarbon import EmissionsTracker
 
 class CHUAssistant:
     def __init__(self):
@@ -19,10 +20,18 @@ class CHUAssistant:
         return r.json()
 
     def process_video_tiny(self):
+        tracker = EmissionsTracker(project_name="yolo_test", measure_power_secs=10)
+        tracker.start()
         yolo_detect(self.video_path)
+        emission = tracker.stop()
+        print('Yolo Emission: ', emission)
     
     def process_video_mediapipe(self):
+        tracker = EmissionsTracker(project_name="mediapipe_test", measure_power_secs=10)
+        tracker.start()
         run_pose_detection(self.video_path)
+        emission = tracker.stop()
+        print('MediaPipe Emission: ', emission)
 
     def access_webcam_tiny(self):
         yolo_detect(self.webcam_str)
